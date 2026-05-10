@@ -1,16 +1,26 @@
 import { useMemo } from "react";
 
-type SceneKind = "sine" | "circle-roll" | "pythagoras" | "fourier" | "matrix" | "derivative" | "mandelbrot" | "parabola";
+type SceneKind =
+  | "sine" | "circle-roll" | "pythagoras" | "fourier" | "matrix" | "derivative" | "mandelbrot" | "parabola"
+  | "circle" | "ellipse" | "hyperbola" | "rectangle" | "trapezium" | "parallelogram" | "cube" | "cuboid";
 
 function pickScene(prompt: string): SceneKind {
   const p = prompt.toLowerCase();
-  if (/(roll|rolling|cycloid|wheel)/.test(p) && /(circle|disc|wheel)/.test(p)) return "circle-roll";
-  if (/(pythag|right triangle|a\^?2.*b\^?2)/.test(p)) return "pythagoras";
-  if (/(fourier|square wave|harmonic)/.test(p)) return "fourier";
-  if (/(matrix|eigen|shear|linear transform)/.test(p)) return "matrix";
-  if (/(derivative|tangent|slope)/.test(p)) return "derivative";
-  if (/(mandelbrot|fractal|julia)/.test(p)) return "mandelbrot";
-  if (/(parabola|quadratic|x\^?2)/.test(p)) return "parabola";
+  if (/(roll|rolling|cycloid)/.test(p)) return "circle-roll";
+  if (/pythag|right triangle/.test(p)) return "pythagoras";
+  if (/fourier|square wave|harmonic/.test(p)) return "fourier";
+  if (/eigen|shear|linear transform|matrix/.test(p)) return "matrix";
+  if (/derivative|tangent|slope/.test(p)) return "derivative";
+  if (/mandelbrot|fractal|julia/.test(p)) return "mandelbrot";
+  if (/hyperbola/.test(p)) return "hyperbola";
+  if (/ellipse|oval/.test(p)) return "ellipse";
+  if (/cuboid|box/.test(p)) return "cuboid";
+  if (/\bcube\b/.test(p)) return "cube";
+  if (/trapezium|trapezoid/.test(p)) return "trapezium";
+  if (/parallelogram/.test(p)) return "parallelogram";
+  if (/rectangle/.test(p)) return "rectangle";
+  if (/\bcircle\b/.test(p)) return "circle";
+  if (/parabola|quadratic|x\^?2/.test(p)) return "parabola";
   return "sine";
 }
 
@@ -23,11 +33,18 @@ const titles: Record<SceneKind, string> = {
   "derivative": "derivative as slope",
   "mandelbrot": "Mandelbrot set",
   "parabola": "y = x²",
+  "circle": "x² + y² = r²",
+  "ellipse": "x²/a² + y²/b² = 1",
+  "hyperbola": "x²/a² − y²/b² = 1",
+  "rectangle": "rectangle",
+  "trapezium": "trapezium",
+  "parallelogram": "parallelogram",
+  "cube": "cube",
+  "cuboid": "cuboid",
 };
 
 export function SceneRenderer({ prompt }: { prompt: string }) {
   const kind = useMemo(() => pickScene(prompt), [prompt]);
-  // key forces re-mount so SVG animations replay per prompt
   const key = `${kind}:${prompt}`;
 
   return (
@@ -48,6 +65,14 @@ export function SceneRenderer({ prompt }: { prompt: string }) {
         {kind === "derivative" && <DerivativeScene />}
         {kind === "mandelbrot" && <MandelbrotScene />}
         {kind === "parabola" && <ParabolaScene />}
+        {kind === "circle" && <CircleScene />}
+        {kind === "ellipse" && <EllipseScene />}
+        {kind === "hyperbola" && <HyperbolaScene />}
+        {kind === "rectangle" && <RectangleScene />}
+        {kind === "trapezium" && <TrapeziumScene />}
+        {kind === "parallelogram" && <ParallelogramScene />}
+        {kind === "cube" && <CubeScene />}
+        {kind === "cuboid" && <CuboidScene />}
       </svg>
       <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-background/70 px-3 py-1 text-xs font-mono text-muted-foreground backdrop-blur">
         <span className="h-2 w-2 rounded-full bg-chalk-green animate-pulse-glow" />
@@ -202,6 +227,116 @@ function ParabolaScene() {
       <Axes />
       <path d={d} fill="none" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 1400 }} />
       <text x="220" y="70" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">y = x²</text>
+    </>
+  );
+}
+
+function CircleScene() {
+  return (
+    <>
+      <Axes />
+      <circle cx="300" cy="180" r="100" fill="oklch(0.78 0.14 240 / 0.15)" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 700 }} />
+      <line x1="300" y1="180" x2="400" y2="180" stroke="oklch(0.8 0.16 350)" strokeWidth="2" />
+      <circle cx="300" cy="180" r="3" fill="oklch(0.9 0.14 95)" />
+      <text x="335" y="172" fill="oklch(0.9 0.14 95)" fontSize="13" fontFamily="serif" fontStyle="italic">r</text>
+      <text x="200" y="70" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">x² + y² = r²</text>
+    </>
+  );
+}
+
+function EllipseScene() {
+  return (
+    <>
+      <Axes />
+      <ellipse cx="300" cy="180" rx="160" ry="80" fill="oklch(0.78 0.14 240 / 0.15)" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 800 }} />
+      <circle cx="180" cy="180" r="4" fill="oklch(0.8 0.16 350)" />
+      <circle cx="420" cy="180" r="4" fill="oklch(0.8 0.16 350)" />
+      <text x="170" y="170" fill="oklch(0.9 0.14 95)" fontSize="12" fontFamily="serif" fontStyle="italic">F₁</text>
+      <text x="410" y="170" fill="oklch(0.9 0.14 95)" fontSize="12" fontFamily="serif" fontStyle="italic">F₂</text>
+      <text x="200" y="60" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">x²/a² + y²/b² = 1</text>
+    </>
+  );
+}
+
+function HyperbolaScene() {
+  const a = 60, b = 70;
+  const right: string[] = [], left: string[] = [];
+  for (let i = -150; i <= 150; i += 4) {
+    const y = i;
+    const dx = a * Math.sqrt(1 + (y * y) / (b * b));
+    right.push((i === -150 ? "M" : "L") + (300 + dx) + "," + (180 + y));
+    left.push((i === -150 ? "M" : "L") + (300 - dx) + "," + (180 + y));
+  }
+  return (
+    <>
+      <Axes />
+      <line x1="60" y1="40" x2="540" y2="320" stroke="oklch(0.6 0.02 250 / 0.4)" strokeDasharray="4 4" />
+      <line x1="60" y1="320" x2="540" y2="40" stroke="oklch(0.6 0.02 250 / 0.4)" strokeDasharray="4 4" />
+      <path d={right.join(" ")} fill="none" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 700 }} />
+      <path d={left.join(" ")} fill="none" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 700 }} />
+      <text x="200" y="60" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">x²/a² − y²/b² = 1</text>
+    </>
+  );
+}
+
+function RectangleScene() {
+  return (
+    <>
+      <rect x="180" y="120" width="240" height="120" fill="oklch(0.78 0.14 240 / 0.15)" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 720 }} />
+      <text x="290" y="110" fill="oklch(0.9 0.14 95)" fontSize="13" fontFamily="serif" fontStyle="italic">l</text>
+      <text x="430" y="185" fill="oklch(0.9 0.14 95)" fontSize="13" fontFamily="serif" fontStyle="italic">w</text>
+      <text x="240" y="290" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">Area = l × w</text>
+    </>
+  );
+}
+
+function TrapeziumScene() {
+  return (
+    <>
+      <polygon points="160,240 440,240 380,120 220,120" fill="oklch(0.78 0.14 240 / 0.15)" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 800 }} />
+      <text x="280" y="110" fill="oklch(0.9 0.14 95)" fontSize="13" fontFamily="serif" fontStyle="italic">a</text>
+      <text x="290" y="262" fill="oklch(0.9 0.14 95)" fontSize="13" fontFamily="serif" fontStyle="italic">b</text>
+      <text x="220" y="300" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">Area = ½(a + b)·h</text>
+    </>
+  );
+}
+
+function ParallelogramScene() {
+  return (
+    <>
+      <polygon points="160,240 380,240 440,120 220,120" fill="oklch(0.78 0.14 240 / 0.15)" stroke="url(#sg)" strokeWidth="3" className="animate-draw" style={{ ["--len" as never]: 820 }} />
+      <line x1="380" y1="240" x2="380" y2="120" stroke="oklch(0.8 0.16 350)" strokeWidth="1.5" strokeDasharray="4 4" />
+      <text x="385" y="185" fill="oklch(0.9 0.14 95)" fontSize="12" fontFamily="serif" fontStyle="italic">h</text>
+      <text x="220" y="300" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">Area = b × h</text>
+    </>
+  );
+}
+
+function CubeScene() {
+  return (
+    <g style={{ transformOrigin: "300px 180px", animation: "spin3d 8s linear infinite" }}>
+      <polygon points="220,240 380,240 380,80 220,80" fill="oklch(0.78 0.14 240 / 0.18)" stroke="url(#sg)" strokeWidth="2.5" />
+      <polygon points="220,80 280,40 440,40 380,80" fill="oklch(0.8 0.16 350 / 0.15)" stroke="url(#sg)" strokeWidth="2.5" />
+      <polygon points="380,80 440,40 440,200 380,240" fill="oklch(0.78 0.14 240 / 0.25)" stroke="url(#sg)" strokeWidth="2.5" />
+      <line x1="220" y1="240" x2="280" y2="200" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <line x1="280" y1="200" x2="440" y2="200" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <line x1="280" y1="200" x2="280" y2="40" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <text x="240" y="320" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">V = a³</text>
+      <style>{`@keyframes spin3d { from { transform: rotate(-2deg);} 50%{transform: rotate(2deg);} to {transform: rotate(-2deg);} }`}</style>
+    </g>
+  );
+}
+
+function CuboidScene() {
+  return (
+    <>
+      <polygon points="180,240 420,240 420,120 180,120" fill="oklch(0.78 0.14 240 / 0.18)" stroke="url(#sg)" strokeWidth="2.5" />
+      <polygon points="180,120 240,80 480,80 420,120" fill="oklch(0.8 0.16 350 / 0.15)" stroke="url(#sg)" strokeWidth="2.5" />
+      <polygon points="420,120 480,80 480,200 420,240" fill="oklch(0.78 0.14 240 / 0.25)" stroke="url(#sg)" strokeWidth="2.5" />
+      <line x1="180" y1="240" x2="240" y2="200" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <line x1="240" y1="200" x2="480" y2="200" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <line x1="240" y1="200" x2="240" y2="80" stroke="url(#sg)" strokeWidth="2" strokeDasharray="3 3" />
+      <text x="220" y="310" fill="oklch(0.9 0.14 95)" fontSize="14" fontFamily="serif" fontStyle="italic">V = l · w · h</text>
     </>
   );
 }
