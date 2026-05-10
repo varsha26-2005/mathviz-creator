@@ -114,13 +114,25 @@ function Create() {
             </span>
           </div>
           {status === "done" && videoUrl ? (
-            <video
-              src={videoUrl}
-              controls
-              autoPlay
-              loop
-              className="aspect-video w-full rounded-3xl border border-border/70 bg-black"
-            />
+            <div className="space-y-3">
+              <video
+                src={videoUrl}
+                controls
+                autoPlay
+                loop
+                className="aspect-video w-full rounded-3xl border border-border/70 bg-black"
+              />
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-mono text-xs text-muted-foreground">mp4 · ready</span>
+                <a
+                  href={videoUrl}
+                  download={`mathviz-${Date.now()}.mp4`}
+                  className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+                >
+                  Download mp4
+                </a>
+              </div>
+            </div>
           ) : status === "error" ? (
             <div className="grid h-[360px] place-items-center rounded-3xl border border-dashed border-destructive/40 bg-background/30 text-center">
               <SceneRenderer prompt={prompt} />
