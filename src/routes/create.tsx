@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import { HeroAnimation } from "@/components/HeroAnimation";
+import { SceneRenderer } from "@/components/SceneRenderer";
 
 const search = z.object({ q: z.string().optional() });
 
@@ -109,7 +109,7 @@ function Create() {
             </span>
           </div>
           {status === "done" ? (
-            <HeroAnimation />
+            <SceneRenderer prompt={prompt} />
           ) : (
             <div className="grid h-[360px] place-items-center rounded-3xl border border-dashed border-border/70 bg-background/30 text-center">
               <div>
