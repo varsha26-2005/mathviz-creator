@@ -1,16 +1,26 @@
 import { useMemo } from "react";
 
-type SceneKind = "sine" | "circle-roll" | "pythagoras" | "fourier" | "matrix" | "derivative" | "mandelbrot" | "parabola";
+type SceneKind =
+  | "sine" | "circle-roll" | "pythagoras" | "fourier" | "matrix" | "derivative" | "mandelbrot" | "parabola"
+  | "circle" | "ellipse" | "hyperbola" | "rectangle" | "trapezium" | "parallelogram" | "cube" | "cuboid";
 
 function pickScene(prompt: string): SceneKind {
   const p = prompt.toLowerCase();
-  if (/(roll|rolling|cycloid|wheel)/.test(p) && /(circle|disc|wheel)/.test(p)) return "circle-roll";
-  if (/(pythag|right triangle|a\^?2.*b\^?2)/.test(p)) return "pythagoras";
-  if (/(fourier|square wave|harmonic)/.test(p)) return "fourier";
-  if (/(matrix|eigen|shear|linear transform)/.test(p)) return "matrix";
-  if (/(derivative|tangent|slope)/.test(p)) return "derivative";
-  if (/(mandelbrot|fractal|julia)/.test(p)) return "mandelbrot";
-  if (/(parabola|quadratic|x\^?2)/.test(p)) return "parabola";
+  if (/(roll|rolling|cycloid)/.test(p)) return "circle-roll";
+  if (/pythag|right triangle/.test(p)) return "pythagoras";
+  if (/fourier|square wave|harmonic/.test(p)) return "fourier";
+  if (/eigen|shear|linear transform|matrix/.test(p)) return "matrix";
+  if (/derivative|tangent|slope/.test(p)) return "derivative";
+  if (/mandelbrot|fractal|julia/.test(p)) return "mandelbrot";
+  if (/hyperbola/.test(p)) return "hyperbola";
+  if (/ellipse|oval/.test(p)) return "ellipse";
+  if (/cuboid|box/.test(p)) return "cuboid";
+  if (/\bcube\b/.test(p)) return "cube";
+  if (/trapezium|trapezoid/.test(p)) return "trapezium";
+  if (/parallelogram/.test(p)) return "parallelogram";
+  if (/rectangle/.test(p)) return "rectangle";
+  if (/\bcircle\b/.test(p)) return "circle";
+  if (/parabola|quadratic|x\^?2/.test(p)) return "parabola";
   return "sine";
 }
 
@@ -23,11 +33,18 @@ const titles: Record<SceneKind, string> = {
   "derivative": "derivative as slope",
   "mandelbrot": "Mandelbrot set",
   "parabola": "y = x²",
+  "circle": "x² + y² = r²",
+  "ellipse": "x²/a² + y²/b² = 1",
+  "hyperbola": "x²/a² − y²/b² = 1",
+  "rectangle": "rectangle",
+  "trapezium": "trapezium",
+  "parallelogram": "parallelogram",
+  "cube": "cube",
+  "cuboid": "cuboid",
 };
 
 export function SceneRenderer({ prompt }: { prompt: string }) {
   const kind = useMemo(() => pickScene(prompt), [prompt]);
-  // key forces re-mount so SVG animations replay per prompt
   const key = `${kind}:${prompt}`;
 
   return (
@@ -48,6 +65,14 @@ export function SceneRenderer({ prompt }: { prompt: string }) {
         {kind === "derivative" && <DerivativeScene />}
         {kind === "mandelbrot" && <MandelbrotScene />}
         {kind === "parabola" && <ParabolaScene />}
+        {kind === "circle" && <CircleScene />}
+        {kind === "ellipse" && <EllipseScene />}
+        {kind === "hyperbola" && <HyperbolaScene />}
+        {kind === "rectangle" && <RectangleScene />}
+        {kind === "trapezium" && <TrapeziumScene />}
+        {kind === "parallelogram" && <ParallelogramScene />}
+        {kind === "cube" && <CubeScene />}
+        {kind === "cuboid" && <CuboidScene />}
       </svg>
       <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-background/70 px-3 py-1 text-xs font-mono text-muted-foreground backdrop-blur">
         <span className="h-2 w-2 rounded-full bg-chalk-green animate-pulse-glow" />
